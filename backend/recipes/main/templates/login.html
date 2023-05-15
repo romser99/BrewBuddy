@@ -1,0 +1,12 @@
+{% extends 'master.html' %}
+
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+</form>
+<p>No Account ?</p>
+<a class="nav-link" href="{% url 'register' %}">Register</a>
+{% endblock %}

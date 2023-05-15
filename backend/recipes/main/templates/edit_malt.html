@@ -1,0 +1,11 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block background_image %}{% static 'images/background-malt.jpg' %}{% endblock %}
+{% block content %}
+  <h1>Edit Malt</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+  </form>
+{% endblock %}

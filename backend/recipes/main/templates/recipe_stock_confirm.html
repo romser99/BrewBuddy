@@ -1,0 +1,13 @@
+{% extends 'master.html' %}
+
+
+{% block content %}
+    {% csrf_token %}
+    <h3>This will substract ingredients from your stock and you could end up with negative values</h3>
+    <form action="{% url 'recipe_stock' recipe.id %}" method="POST">
+        {% csrf_token %}
+        <button class="btn btn-primary" type="submit" name="confirmed" value="true">Update Stock</button>
+        <button class="btn btn-secondary" type="submit" name="confirmed" value="false">Cancel</button>
+      </form>
+
+{% endblock %}

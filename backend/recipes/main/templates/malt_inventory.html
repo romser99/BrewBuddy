@@ -1,0 +1,79 @@
+<!-- inventory.html -->
+
+
+{% extends 'master.html' %}
+{% load static %}
+{% block background_image %}{% static 'images/background-malt.jpg' %}{% endblock %}
+{% block content %}
+  <h2>Malt Inventory</h2>
+  
+    <button class="btn btn-light mb-3"id="add-malt-btn" onclick="toggleForm()" >Add Malt</button>
+    <form style="background-color : lightgrey ;display:none;" id="add-malt-form" method="POST" >
+        {% csrf_token %}
+        <label for="name">Name:</label>
+        <input type="text" name="name"><br>
+        <label for="type">Type:</label>
+        <input type="text" name="type"><br>
+        <label for="ebc">EBC:</label>
+        <input type="number" name="ebc"><br>
+        <label for="producer">Producer:</label>
+        <input type="text" name="producer"><br>
+        <label for="quantity">Quantity:</label>
+        <input type="number" name="quantity" step="0.1"> <br>
+        <button class="btn btn-light"type="submit">Add Malt</button>
+    </form>
+    <script>
+        function toggleForm() {
+          var form = document.getElementById("add-malt-form");
+          var btn = document.getElementById("add-malt-btn");
+          if (form.style.display === "none") {
+            form.style.display = "block";
+            btn.innerHTML = "Hide";
+          } else {
+            form.style.display = "none";
+            btn.innerHTML = "Add Malt";
+          }
+        }
+    </script>
+     
+    
+  
+  <table style="background-color = transparent">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>EBC</th>
+        <th>Producer</th>
+        <th>Quantity (kg)</th>
+        <th>Remove</th>
+        <th>Edit</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for malt in malts %}
+        <tr>
+          <td>{{ malt.name }}</td>
+          <td>{{ malt.type }}</td>
+          <td>{{ malt.ebc }}</td>
+          <td>{{ malt.producer }}</td>
+          <td>{{ malt.quantity }} kg</td>
+          <td>
+            <form action="{% url 'remove_malt' malt.id %}" method="POST">
+                {% csrf_token %}
+                <button class="btn btn-danger btn-sm" type="submit"style="">Remove</button>
+              </form>
+        </td>
+        <td>
+            <form action="{% url 'edit_malt' malt.id %}" method="GET">
+              {% csrf_token %}
+              <button class="btn btn-info btn-sm" type="submit">Edit</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  
+{% endblock %}

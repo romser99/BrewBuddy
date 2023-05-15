@@ -1,0 +1,76 @@
+<!-- inventory.html -->
+
+{% extends 'master.html' %}
+{% load static %}
+{% block background_image %}{% static 'images/background-hop.jpg' %}{% endblock %}
+{% block content %}
+  <h2>Hop Inventory</h2>
+  <div>
+    <button class="btn btn-light mb-3" id="add-hop-btn" onclick="toggleForm()">Add Hop</button>
+    <form id="add-hop-form" method="POST" style="display:none;">
+        {% csrf_token %}
+        <label for="name">Name:</label>
+        <input type="text" name="name"><br>
+        <label for="pellet">Pellet:</label>
+        <input type="checkbox" name="pellet"><br>
+        <label for="alpha" >Alpha % :</label>
+        <input type="number" name="alpha" step="0.1"><br>
+        <label for="producer">Producer:</label>
+        <input type="text" name="producer"><br>
+        <label for="quantity">Quantity (g):</label>
+        <input type="number" name="quantity" step="0.1"><br>
+        <button class="btn btn-light" type="submit">Add hop</button>
+    </form>
+    <script>
+        function toggleForm() {
+          var form = document.getElementById("add-hop-form");
+          var btn = document.getElementById("add-hop-btn");
+          if (form.style.display === "none") {
+            form.style.display = "block";
+            btn.innerHTML = "Hide";
+          } else {
+            form.style.display = "none";
+            btn.innerHTML = "Add hop";
+          }
+        }
+    </script>
+     
+    
+  
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Pellet</th>
+        <th>Alpha</th>
+        <th>Producer</th>
+        <th>Quantity (g)</th>
+        <th>Remove</th>
+        <th>Edit</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for hop in hops %}
+        <tr>
+          <td>{{ hop.name }}</td>
+          <td>{{ hop.pellet }}</td>
+          <td>{{ hop.alpha }} % </td>
+          <td>{{ hop.producer }}</td>
+          <td>{{ hop.quantity }} g</td>
+          <td>
+            <form action="{% url 'remove_hop' hop.id %}" method="POST">
+                {% csrf_token %}
+                <button class="btn btn-danger btn-sm" type="submit">Remove</button>
+              </form>
+        </td>
+        <td>
+          <form action="{% url 'edit_hop' hop.id %}" method="GET">
+            {% csrf_token %}
+            <button class="btn btn-info btn-sm" type="submit">Edit</button>
+          </form>
+        </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

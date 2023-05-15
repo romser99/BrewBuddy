@@ -1,0 +1,69 @@
+<!-- inventory.html -->
+
+{% extends 'master.html' %}
+{% load static %}
+{% block background_image %}{% static 'images/background-yeast.jpg' %}{% endblock %}
+{% block content %}
+  <h2>Yeast Inventory</h2>
+  <div>
+    <button class="btn btn-light mb-3" id="add-yeast-btn" onclick="toggleForm()">Add Yeast</button>
+    <form id="add-yeast-form" method="POST" style="display:none;">
+        {% csrf_token %}
+        <label for="name">Name:</label>
+        <input type="text" name="name"><br>
+        <label for="producer">Producer:</label>
+        <input type="text" name="producer"><br>
+        <label for="quantity">Quantity:</label>
+        <input type="number" name="quantity"><br>
+        <button class="btn btn-light" type="submit">Add Yeast</button>
+    </form>
+    <script>
+        function toggleForm() {
+          var form = document.getElementById("add-yeast-form");
+          var btn = document.getElementById("add-yeast-btn");
+          if (form.style.display === "none") {
+            form.style.display = "block";
+            btn.innerHTML = "Hide";
+          } else {
+            form.style.display = "none";
+            btn.innerHTML = "Add Yeast";
+          }
+        }
+    </script>
+     
+    
+  
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Producer</th>
+        <th>Quantity (doses)</th>
+        <th>Remove</th>
+        <th>Edit</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for yeast in yeasts %}
+        <tr>
+          <td>{{ yeast.name }}</td>
+          <td>{{ yeast.producer }}</td>
+          <td>{{ yeast.quantity|floatformat:"0" }}</td>
+          <td>
+            <form action="{% url 'remove_yeast' yeast.id %}" method="POST">
+                {% csrf_token %}
+                <button class="btn btn-danger btn-sm" type="submit">Remove</button>
+              </form>
+        </td>
+        <td>
+            <form action="{% url 'edit_yeast' yeast.id %}" method="GET">
+              {% csrf_token %}
+              <button class="btn btn-info btn-sm" type="submit">Edit</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  
+{% endblock %}

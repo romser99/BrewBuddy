@@ -1,0 +1,90 @@
+
+{% extends 'master.html' %}
+{% load static %}
+{% block background_image %}{% static 'images/background-recipe.jpg' %}{% endblock %}
+
+{% block content %}
+  <h2>My Recipes</h2>
+  
+    <button class="btn btn-light mb-3" id="add-recipe-btn" onclick="toggleForm()">Add Recipe</button>
+    <form id="add-recipe-form" method="POST" style="display:none;">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button class="btn btn-light" type="submit">Add Recipe</button>
+  </form>
+    <script>
+        function toggleForm() {
+          var form = document.getElementById("add-recipe-form");
+          var btn = document.getElementById("add-recipe-btn");
+          if (form.style.display === "none") {
+            form.style.display = "block";
+            btn.innerHTML = "Hide";
+          } else {
+            form.style.display = "none";
+            btn.innerHTML = "Add Recipe";
+          }
+        }
+    </script>
+     
+    
+  
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Volume (L)</th>
+        <th>ABV (%)</th>
+        <th>EBC</th>
+        <th>IBU</th>
+        <th>Cost (EUR) </th>
+        <th>Sale(EUR)</th>
+        <th>Status</th>
+        <th>Likes</th>
+        <th>Remove</th>
+        <th>Edit</th>
+        <th>Details</th>
+        
+      </tr>
+    </thead>
+    <tbody>
+      {% for recipe in recipes %}
+        <tr>
+          <td>{{ recipe.name }}</td>
+          <td>{{recipe.family}}</td>
+          <td>{{ recipe.volume }}</td>
+          <td>{{ recipe.alcool|floatformat:1 }}</td>
+          <td>{{ recipe.ebc|floatformat:1 }}</td>
+          <td>{{ recipe.ibu|floatformat:1}}</td>
+          <td>{{ recipe.cost }}</td>
+          <td>{{ recipe.sale }}</td>
+          <td>{% if recipe.private%}Private{% else %}Public{% endif %}</td>
+          <td>{{ recipe.Likes.count }}</td>  
+          <td>
+            <form action="{% url 'remove_recipe' recipe.id %}" method="POST">
+                {% csrf_token %}
+                <button class="btn btn-danger btn-sm" type="submit">Remove</button>
+              </form>
+        </td>
+        <td>
+          <form action="{% url 'edit_recipe' recipe.id %}" method="GET">
+            {% csrf_token %}
+            <button class="btn btn-info btn-sm" type="submit">Edit</button>
+          </form>
+        </td>
+        <td>
+          <form action="{% url 'recipe_detail' recipe.id %}" method="GET">
+            {% csrf_token %}
+            <button class="btn btn-info btn-sm" type="submit">Details</button>
+          </form>
+        </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  
+{% endblock %}
+    
+ 
+    
+

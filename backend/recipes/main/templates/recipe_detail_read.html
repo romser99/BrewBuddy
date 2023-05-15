@@ -1,0 +1,167 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block background_image %}{% static 'images/background-recipe.jpg' %}{% endblock %}
+{% block content %}
+<h1>{{ recipe.name }}</h1>
+<p>{{ recipe.description }}</p>
+<form method="POST" action="{% url 'like_recipe' recipe.id %}" class="float-right">
+    {% csrf_token %}
+    <button class="btn btn-info like-button " href="like_recipe" type="submit">
+    {% if user.is_authenticated %}
+        {% if is_liked == True %}
+            Unlike
+        {% else %}
+            Like
+        {% endif %}
+    {% endif %}
+    </button>
+</form>
+<table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Volume (L)</th>
+        <th>ABV (%)</th>
+        <th>EBC</th>
+        <th>IBU</th>
+        <th>Likes</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>{{recipe.family}}</td>
+          <td>{{ recipe.volume }}</td>
+          <td>{{ recipe.alcool|floatformat:1 }}</td>
+          <td>{{ recipe.ebc|floatformat:1 }}</td>
+          <td>{{ recipe.ibu|floatformat:1}}</td>
+          <td >{{ recipe.Likes.count }}
+             
+            </td>
+
+            
+
+      
+      
+
+        </tr>
+    </tbody>
+  </table>
+<h2>Malts</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>EBC</th>
+            <th>Producer</th>
+            <th>Quantity (kg)</th>
+            <th>Remove</th>
+        </tr>
+    </thead>
+<tbody>
+    {% for malt in malts %}
+    <tr>
+        <td>{{ malt.stockMalt.name }}</td>
+        <td>{{ malt.stockMalt.type }}</td>
+        <td>{{ malt.stockMalt.ebc }}</td>
+        <td>{{ malt.stockMalt.producer }}</td>
+        <td>{{ malt.quantity }}</td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+<h2>Brewings</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Temperature (°C)</th>
+            <th>Time (min)</th>
+            <th>Remove</th>
+        </tr>
+    </thead>
+<tbody>
+    {% for brewing in brewings %}
+    <tr>
+        <td>{{ brewing.temperature }}</td>
+        <td>{{ brewing.time }}</td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+<h2>Boiling and Dry Hopping</h2>
+<table>
+    <thead>
+        <tr>
+            <th>DryHopping</th>
+            <th>Time</th>
+            <th>Hops</th>
+            <th>Extras</th>
+        </tr>
+    </thead>
+<tbody>
+    {% for boiling in boilings %}
+    <tr>
+        <td>{{ boiling.cool }}</td>
+        <td>{{ boiling.time }}</td>
+        <td>
+            <ul>
+                {% for hop in boiling.Hops.all %}
+                    <li>{{ hop.stockHop.name }} - {{ hop.quantity }}g -  {{ hop.stockHop.alpha }}%</li>
+                {% endfor %}
+            </ul>
+        </td>
+        <td>
+            <ul>
+                {% for extra in boiling.Extras.all %}
+                    <li>{{ extra.stockExtra.name }} - {{ extra.quantity }}kg</li>
+                {% endfor %}
+
+            </ul>
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+
+
+<h2>Yeasts</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Quantity</th>
+            <th>Remove</th>
+        </tr>
+    </thead>
+<tbody>
+    {% for yeast in yeasts %}
+    <tr>
+        <td>{{ yeast.stockYeast.name }}</td>
+        <td>{{ yeast.quantity|floatformat:"0" }}</td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+<h2>Fermentation</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Temperature</th>
+            <th>Time</th>
+            <th>Remove</th>
+        </tr>
+    </thead>
+<tbody>
+    {% for fermentation in fermentations %}
+    <tr>
+        <td>{{ fermentation.temperature }}</td>
+        <td>{{ fermentation.time }}</td>
+        
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+
+
+{% endblock %}

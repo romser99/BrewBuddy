@@ -1,0 +1,47 @@
+
+{% extends 'master.html' %}
+{% load static %}
+{% block background_image %}{% static 'images/background-recipe.jpg' %}{% endblock %}
+
+{% block content %}
+    <h2>My Liked Recipes</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Volume (L)</th>
+                <th>ABV (%)</th>
+                <th>EBC</th>
+                <th>IBU</th>
+                <th>Likes</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for recipe in recipes %}
+            <tr>
+                <td>{{ recipe.name }}</td>
+                <td>{{recipe.family}}</td>
+                <td>{{ recipe.volume }}</td>
+                <td>{{ recipe.alcool|floatformat:1 }}</td>
+                <td>{{ recipe.ebc|floatformat:1 }}</td>
+                <td>{{ recipe.ibu|floatformat:1}}</td>
+                <td>{{ recipe.Likes.count }}</td>  
+                <td>
+                    <form action="{% url 'recipe_detail_read' recipe.id %}" method="GET">
+                        {% csrf_token %}
+                        <button class="btn btn-info btn-sm" type="submit">Details</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  
+{% endblock %}
+    
+ 
+    
+

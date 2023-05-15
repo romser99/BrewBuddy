@@ -1,0 +1,258 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block background_image %}{% static 'images/background-recipe.jpg' %}{% endblock %}
+{% block content %}
+<h1>{{ recipe.name }}</h1>
+<p>{{ recipe.description }}</p>
+<h2>Overview</h2>
+<table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Volume (L)</th>
+        <th>ABV (%)</th>
+        <th>EBC</th>
+        <th>IBU</th>
+        <th>Cost (EUR) </th>
+        <th>Sale(EUR)</th>
+        <th>Status</th>
+        <th>Likes</th>
+        <th>Edit</th>   
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>{{recipe.family}}</td>
+          <td>{{ recipe.volume }}</td>
+          <td>{{ recipe.alcool|floatformat:1 }}</td>
+          <td>{{ recipe.ebc|floatformat:1 }}
+            <span class="ebc-color"></span>
+            <style>
+                .ebc-color {
+                    display: inline-block;
+                    width: 12px;
+                    height: 12px;
+                    margin-right: 5px;
+                    border-radius: 50%;
+                    background-color: #ffcc00; 
+            </style>
+            <script>
+                var ebc = {{ recipe.ebc }}; 
+                var ebcColor = getEbcColor(ebc); 
+                var ebcColorSpan = document.querySelector('.ebc-color');
+                ebcColorSpan.style.backgroundColor = ebcColor;
+                function getEbcColor(ebc) {
+                    if (ebc < 8) {
+                        return "#F3F993"; // pale straw
+                      } else if (ebc < 12) {
+                        return "#F5F56B"; // straw
+                      } else if (ebc < 20) {
+                        return "#F7EA38"; // pale gold
+                      } else if (ebc < 30) {
+                        return "#F0D020"; // deep gold
+                      } else if (ebc < 40) {
+                        return "#E0B040"; // amber
+                      } else if (ebc < 50) {
+                        return "#D07000"; // copper
+                      } else if (ebc < 80) {
+                        return "#A05000"; // dark copper
+                      } else if (ebc < 120) {
+                        return "#703010"; // brown
+                      } else {
+                        return "#501800"; // dark brown
+                      }
+                }
+            </script>
+          </td>
+          <td>{{ recipe.ibu|floatformat:1}}</td>
+          <td>{{ recipe.cost }}</td>
+          <td>{{ recipe.sale }}</td>
+          <td>{% if recipe.private%}Private{% else %}Public{% endif %}</td>
+          <td>{{ recipe.Likes.count }}</td>
+          <td>
+            <form action="{% url 'advanced_edit_recipe' recipe.id %}" method="POST">
+                {% csrf_token %}
+                <button class="btn btn-info btn-sm" type="submit">Edit</button>
+              </form>
+        </td>
+        </tr>
+    </tbody>
+  </table>
+<h2>Malts</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>EBC</th>
+            <th>Producer</th>
+            <th>Quantity (kg)</th>
+            <th>Remove</th>
+        </tr>
+    </thead>
+<tbody>
+    {% for malt in malts %}
+    <tr>
+        <td>{{ malt.stockMalt.name }}</td>
+        <td>{{ malt.stockMalt.type }}</td>
+        <td>{{ malt.stockMalt.ebc }}
+            
+        </td>
+        <td>{{ malt.stockMalt.producer }}</td>
+        <td>{{ malt.quantity }}</td>
+        <td>
+            <form action="{% url 'remove_recipe_malt' recipe.id malt.id %}" method="POST">
+                {% csrf_token %}
+                <button class="btn btn-danger btn-sm" type="submit">Remove</button>
+              </form>
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+<a href="{% url 'select_malt' recipe.id %}">Add Malt</a>
+<h2>Brewings</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Temperature (°C)</th>
+            <th>Time (min)</th>
+            <th>Remove</th>
+        </tr>
+    </thead>
+<tbody>
+    {% for brewing in brewings %}
+    <tr>
+        <td>{{ brewing.temperature }}</td>
+        <td>{{ brewing.time }}</td>
+        <td>
+            <form action="{% url 'remove_recipe_brewing' recipe.id brewing.id %}" method="POST">
+                {% csrf_token %}
+                <button class="btn btn-danger btn-sm" type="submit">Remove</button>
+              </form>
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+<a href="{% url 'create_brewing' recipe.id %}">Add Brewing Step</a>
+<h2>Boiling and Dry Hopping</h2>
+<table>
+    <thead>
+        <tr>
+            <th>DryHopping</th>
+            <th>Time</th>
+            <th>Hops</th>
+            <th>Extras</th>
+            <th>Remove</th>
+        </tr>
+    </thead>
+<tbody>
+    {% for boiling in boilings %}
+    <tr>
+        <td>{% if boiling.cool%}Yes{% else %}no{% endif %}</td>
+        <td>{{ boiling.time }}</td>0
+        <td>
+            <ul>
+                {% for hop in boiling.Hops.all %}
+                    <li>{{ hop.stockHop.name }} - {{ hop.quantity }}g -  {{ hop.stockHop.alpha }}%</li>
+                    <form action="{% url 'remove_boiling_hop' recipe.id hop.id %}" method="POST">
+                        {% csrf_token %}
+                        <button class="btn btn-danger btn-sm" type="submit">Remove</button>
+                    </form>
+                {% endfor %}
+
+            </ul>
+            <a href="{% url 'add_boiling_hop' boiling.id %}">Add Hop</a>
+        </td>
+        <td>
+            <ul>
+                {% for extra in boiling.Extras.all %}
+                    <li>{{ extra.stockExtra.name }} - {{ extra.quantity }}kg</li>
+                    <form action="{% url 'remove_boiling_extra' recipe.id extra.id %}" method="POST">
+                        {% csrf_token %}
+                        <button class="btn btn-danger btn-sm" type="submit">Remove</button>
+                    </form>
+                {% endfor %}
+
+            </ul>
+            <a href="{% url 'add_boiling_extra' boiling.id %}">Add Extra</a>
+        </td>
+        <td>
+            <form action="{% url 'remove_recipe_boiling' recipe.id boiling.id %}" method="POST">
+                {% csrf_token %}
+                <button class="btn btn-danger btn-sm" type="submit">Remove</button>
+              </form>
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+<a href="{% url 'create_boiling' recipe.id %}">Add Boiling Step</a>
+
+<h2>Yeasts</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Quantity</th>
+            <th>Remove</th>
+        </tr>
+    </thead>
+<tbody>
+    {% for yeast in yeasts %}
+    <tr>
+        <td>{{ yeast.stockYeast.name }}</td>
+        <td>{{ yeast.quantity|floatformat:"0" }}</td>
+        <td>
+            <form action="{% url 'remove_recipe_yeast' recipe.id yeast.id %}" method="POST">
+                {% csrf_token %}
+                <button class="btn btn-danger btn-sm" type="submit">Remove</button>
+              </form>
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+<a href="{% url 'add_recipe_yeast' recipe.id %}">Add Yeast</a>
+<h2>Fermentation</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Temperature</th>
+            <th>Time</th>
+            <th>Remove</th>
+        </tr>
+    </thead>
+<tbody>
+    {% for fermentation in fermentations %}
+    <tr>
+        <td>{{ fermentation.temperature }}</td>
+        <td>{{ fermentation.time }}</td>
+        <td>
+            <form action="{% url 'remove_recipe_fermentation' recipe.id fermentation.id %}" method="POST">
+                {% csrf_token %}
+                <button class="btn btn-danger btn-sm" type="submit">Remove</button>
+              </form>
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+<a href="{% url 'create_fermentation' recipe.id %}">Add Fermenatation Step</a>
+<td>
+    <form action="{% url 'recipe_calculations' recipe.id %}" method="POST">
+        {% csrf_token %}
+        <button class="btn btn-info btn-sm" type="submit">Update values</button>
+      </form>
+</td>
+<td>
+    <form action="{% url 'recipe_stock_confirm' recipe.id %}" method="POST">
+      {% csrf_token %}
+      <button class="btn btn-info btn-sm" type="submit">Brew recipe</button>
+    </form>
+  </td>
+  
+
+
+{% endblock %}
