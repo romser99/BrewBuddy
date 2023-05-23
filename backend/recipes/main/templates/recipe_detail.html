@@ -151,7 +151,7 @@
     {% for boiling in boilings %}
     <tr>
         <td>{% if boiling.cool%}Yes{% else %}no{% endif %}</td>
-        <td>{{ boiling.time }}</td>0
+        <td>{{ boiling.time }}</td>
         <td>
             <ul>
                 {% for hop in boiling.Hops.all %}

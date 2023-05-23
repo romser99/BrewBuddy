@@ -15,6 +15,8 @@
         <input type="text" name="producer"><br>
         <label for="quantity">Quantity:</label>
         <input type="number" name="quantity"><br>
+        <label for="cost">Cost EUR:</label>
+        <input type="number" name="cost" step="0.01"> <br>
         <button class="btn btn-light" type="submit">Add Yeast</button>
     </form>
     <script>
@@ -39,6 +41,7 @@
         <th>Name</th>
         <th>Producer</th>
         <th>Quantity (doses)</th>
+        <th>Cost</th>
         <th>Remove</th>
         <th>Edit</th>
       </tr>
@@ -49,6 +52,7 @@
           <td>{{ yeast.name }}</td>
           <td>{{ yeast.producer }}</td>
           <td>{{ yeast.quantity|floatformat:"0" }}</td>
+          <td>{{yeast.cost}} EUR</td>
           <td>
             <form action="{% url 'remove_yeast' yeast.id %}" method="POST">
                 {% csrf_token %}

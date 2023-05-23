@@ -26,7 +26,48 @@
                 <td>{{recipe.family}}</td>
                 <td>{{ recipe.volume }}</td>
                 <td>{{ recipe.alcool|floatformat:1 }}</td>
-                <td>{{ recipe.ebc|floatformat:1 }}</td>
+                <td>{{ recipe.ebc|floatformat:1 }}
+                    <span class="ebc-color-{{ recipe.id }}"></span>
+                    <style>
+                      .ebc-color-{{ recipe.id }} {
+                        display: inline-block;
+                        width: 12px;
+                        height: 12px;
+                        margin-right: 5px;
+                        border-radius: 50%;
+                        background-color: #ffcc00;
+                      }
+                    </style>
+                    <script>
+                      var ebc = {{ recipe.ebc }};
+                      var ebcColor = getEbcColor(ebc);
+                      var ebcColorSpan = document.querySelector('.ebc-color-{{ recipe.id }}');
+                      ebcColorSpan.style.backgroundColor = ebcColor;
+                  
+                      function getEbcColor(ebc) {
+                        if (ebc < 8) {
+                          return "#F3F993"; // pale straw
+                        } else if (ebc < 12) {
+                          return "#F5F56B"; // straw
+                        } else if (ebc < 20) {
+                          return "#F7EA38"; // pale gold
+                        } else if (ebc < 30) {
+                          return "#F0D020"; // deep gold
+                        } else if (ebc < 40) {
+                          return "#E0B040"; // amber
+                        } else if (ebc < 50) {
+                          return "#D07000"; // copper
+                        } else if (ebc < 80) {
+                          return "#A05000"; // dark copper
+                        } else if (ebc < 120) {
+                          return "#703010"; // brown
+                        } else {
+                          return "#501800"; // dark brown
+                        }
+                      }
+                    </script>
+                  </td>
+                  
                 <td>{{ recipe.ibu|floatformat:1}}</td>
                 <td>{{ recipe.Likes.count }}</td>  
                 <td>

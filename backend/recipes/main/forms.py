@@ -61,7 +61,7 @@ class AddMaltForm(forms.ModelForm):
     
     class Meta:
         model = StockMalt
-        fields = ['name', 'type', 'ebc', 'producer', 'quantity']
+        fields = ['name', 'type', 'ebc', 'producer', 'quantity','cost']
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -70,8 +70,11 @@ class AddMaltForm(forms.ModelForm):
         self.fields['ebc'].widget.attrs.update({'placeholder': 'EBC'})
         self.fields['producer'].widget.attrs.update({'placeholder': 'Producer'})
         self.fields['quantity'].widget.attrs.update({'placeholder': 'Quantity'})
+        self.fields['cost'].widget.attrs.update({'placeholder': 'cost'})
         self.fields['producer'].required = False
         self.fields['type'].required = False
+        self.fields['cost'].required = False
+        
 
     def save(self, user, commit=True):
         malt = super().save(commit=False)
@@ -83,7 +86,7 @@ class AddMaltForm(forms.ModelForm):
 class AddHopForm(forms.ModelForm):
     class Meta:
         model = StockHop
-        fields = ['name', 'pellet', 'alpha', 'producer', 'quantity']
+        fields = ['name', 'pellet', 'alpha', 'producer', 'quantity','cost']
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -92,7 +95,9 @@ class AddHopForm(forms.ModelForm):
         self.fields['alpha'].widget.attrs.update({'placeholder': '%'})
         self.fields['producer'].widget.attrs.update({'placeholder': 'Producer'})
         self.fields['quantity'].widget.attrs.update({'placeholder': 'Quantity'})
+        self.fields['cost'].widget.attrs.update({'placeholder': 'cost'})
         self.fields['producer'].required = False
+        self.fields['cost'].required = False
 
     def save(self, user, commit=True):
         hop = super().save(commit=False)
@@ -104,14 +109,17 @@ class AddHopForm(forms.ModelForm):
 class AddYeastForm(forms.ModelForm):
     class Meta:
         model = StockYeast
-        fields = ['name', 'producer', 'quantity']
+        fields = ['name', 'producer', 'quantity','cost']
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['name'].widget.attrs.update({'placeholder': 'Yeast name'})
         self.fields['producer'].widget.attrs.update({'placeholder': 'Producer'})
         self.fields['quantity'].widget.attrs.update({'placeholder': 'Quantity'})
+        self.fields['cost'].widget.attrs.update({'placeholder': 'cost'})
         self.fields['producer'].required = False
+        self.fields['cost'].required = False
+        
 
     def save(self, user, commit=True):
         yeast = super().save(commit=False)
@@ -123,14 +131,16 @@ class AddYeastForm(forms.ModelForm):
 class AddExtraForm(forms.ModelForm):
     class Meta:
         model = StockExtra
-        fields = ['name', 'producer', 'quantity']
+        fields = ['name', 'producer', 'quantity','cost']
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['name'].widget.attrs.update({'placeholder': 'extra name'})
         self.fields['producer'].widget.attrs.update({'placeholder': 'Producer'})
         self.fields['quantity'].widget.attrs.update({'placeholder': 'Quantity'})
+        self.fields['cost'].widget.attrs.update({'placeholder': 'cost'})
         self.fields['producer'].required = False
+        self.fields['cost'].required = False
 
     def save(self, user, commit=True):
         extra = super().save(commit=False)
@@ -286,3 +296,14 @@ class EditRecipeForm(forms.ModelForm):
         if ibu is not None and ibu < 0:
             raise forms.ValidationError('IBU cannot be negative.')
         return ibu
+
+class RecipeSearchForm(forms.Form):
+    SORT_CHOICES = [
+        ('name', 'Name'),
+        ('alcool', 'Alcool'),
+        ('ebc', 'ebc'),
+        ('ibu', 'ibu'),
+    ]
+    
+    search_query = forms.CharField(max_length=100, required=False)
+    sort_by = forms.ChoiceField(choices=SORT_CHOICES, required=False, widget=forms.SelectMultiple(attrs={'size': 4}))

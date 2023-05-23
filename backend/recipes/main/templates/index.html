@@ -2,6 +2,12 @@
 {% load static %}
 {% block background_image %}{% static 'images/background-main.jpg' %}{% endblock %}
 {% block content %}
+<form method="GET" action="{% url 'recipe_search' %}">
+    <input type="text" name="search_query" value="{{ search_query }}" placeholder="Looking for a recipe ?">
+    <button type="submit">Search</button>  
+</form>
+<a href="{% url 'get_random_recipe' %}" >Surprise Me</a>
+
 
 <div class="row">
     

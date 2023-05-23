@@ -14,7 +14,8 @@ from .forms import *
 from.formset import *
 from django.db import transaction
 from django.contrib.auth import login, authenticate, logout
-from django.db.models import Count
+from django.db.models import Count, Q
+from django.core.paginator import Paginator
 
 
 def main(request):
@@ -443,7 +444,8 @@ def remove_recipe_fermentation(request, fermentation_id, recipe_id):
     return redirect('recipe_detail', recipe_id=recipe_id)
 
 def recipe_calculations(request, recipe_id):
-    recipe = get_object_or_404(Recipe,pk=recipe_id) 
+    recipe = get_object_or_404(Recipe,pk=recipe_id)
+    cost = 0 
     EBC = 0
     IBU = 0
     PPG = 37
@@ -456,9 +458,13 @@ def recipe_calculations(request, recipe_id):
         for hop in boiling.Hops.all() :
             alpha = hop.stockHop.alpha
             mass= hop.quantity
+            cost += hop.stockHop.cost * mass/100
             IBU += (1.65*(0.000125)**(1.06-1))*(1-exp(-0.04*time))*((alpha/100)*mass*1000)/(4.15*volume)
+        for extra in boiling.Extras.all() :
+            cost += extra.stockExtra.cost * extra.quantity
     for malt in recipe.Malts.all() :
         mass = malt.quantity
+        cost += malt.stockMalt.cost * mass
         color = malt.stockMalt.ebc/2.65
         MCU = color*2.2046*mass/(volume*0.264)
         if MCU >= 25 :
@@ -466,6 +472,9 @@ def recipe_calculations(request, recipe_id):
         else :
             EBC += MCU
         totmass += mass*2.2046
+    for yeast in recipe.Yeasts.all() :
+        cost += yeast.quantity * yeast.stockYeast.cost
+
     EBC = 1.97*EBC
     GU = totmass * PPG * efficiency
     OG = 1+(GU/(volume*0.264))/1000
@@ -474,6 +483,8 @@ def recipe_calculations(request, recipe_id):
     recipe.ebc = EBC
     recipe.ibu = IBU
     recipe.alcool = alcool
+    recipe.cost = cost
+
     recipe.save()
     return redirect('recipe_detail',recipe_id = recipe_id)
     
@@ -542,6 +553,54 @@ def liked_recipes (request) :
         'recipes': recipes,
     }
     return render(request, 'liked_recipes.html', context)
+
+
+def recipe_search(request):
+    search_query = request.GET.get('search_query', '')
+    sort_by = request.GET.getlist('sort_by')
+    descending = 'descending' in request.GET
+
+    recipes = Recipe.objects.filter(Q(name__icontains=search_query) | Q(family__icontains=search_query))
+
+    # Apply sorting
+    if sort_by:
+        ordering = []
+        for field in sort_by:
+            if descending:
+                field = '-' + field
+            ordering.append(field)
+        recipes = recipes.order_by(*ordering)
+
+    paginator = Paginator(recipes, 10)  # Display 10 recipes per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'recipes': recipes,
+        'search_query': search_query,
+        'sort_by': sort_by,
+        'descending': descending,
+    }
+    return render(request, 'recipe_search.html', context)
+
+def get_random_recipe(request):
+    public_recipes = Recipe.objects.filter(private=False)
+    recipe_count = public_recipes.count()
+    
+    if recipe_count > 0:
+        random_index = random.randint(0, recipe_count - 1)
+        random_recipe = public_recipes[random_index]
+        recipe_id = random_recipe.id
+        return recipe_detail_read(request, recipe_id)
+    
+    else :
+        return render(request,'index.html')
+
+
+
+
+
+
 
 
     

@@ -46,7 +46,10 @@ urlpatterns = [
     path('recipe_stock_confirm/<int:recipe_id>/', views.recipe_stock_confirm, name='recipe_stock_confirm'),
     path('recipe_stock/<int:recipe_id>/', views.recipe_stock, name='recipe_stock'),
     path('like_recipe/<int:recipe_id>/', views.like_recipe, name='like_recipe'),
-    path('liked_recipes', views.liked_recipes, name='liked_recipes'),
+    path('liked_recipes/', views.liked_recipes, name='liked_recipes'),
+    path('recipe_search/', views.recipe_search, name='recipe_search'),
+    path('get_random_recipe/', views.get_random_recipe, name='get_random_recipe'),
+
     
 
 ]

@@ -20,6 +20,8 @@
         <input type="text" name="producer"><br>
         <label for="quantity">Quantity:</label>
         <input type="number" name="quantity" step="0.1"> <br>
+        <label for="cost">Cost EUR/kg:</label>
+        <input type="number" name="cost" step="0.01"> <br>
         <button class="btn btn-light"type="submit">Add Malt</button>
     </form>
     <script>
@@ -46,6 +48,7 @@
         <th>EBC</th>
         <th>Producer</th>
         <th>Quantity (kg)</th>
+        <th>Cost</th>
         <th>Remove</th>
         <th>Edit</th>
       </tr>
@@ -58,6 +61,7 @@
           <td>{{ malt.ebc }}</td>
           <td>{{ malt.producer }}</td>
           <td>{{ malt.quantity }} kg</td>
+          <td>{{malt.cost}} EUR/kg</td>
           <td>
             <form action="{% url 'remove_malt' malt.id %}" method="POST">
                 {% csrf_token %}

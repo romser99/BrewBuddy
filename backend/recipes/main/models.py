@@ -44,6 +44,7 @@ class StockMalt(models.Model):
   ebc = models.IntegerField(default=2)
   producer = models.CharField(max_length=50,null= True)
   quantity = models.FloatField(default = 0)
+  cost = models.FloatField(default = 0)
   user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='StockMalts')
   def __str__(self):
         return self.name+' EBC = '+str(self.ebc)
@@ -64,6 +65,7 @@ class StockHop(models.Model):
   alpha = models.FloatField(default = 0)  
   producer = models.CharField(max_length=50,null= True)
   quantity = models.FloatField(default = 0)
+  cost = models.FloatField(default = 0)
   user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='StockHops')
 
 class Hop(models.Model):
@@ -79,6 +81,7 @@ class StockYeast(models.Model):
   name = models.CharField(max_length=50)
   producer = models.CharField(max_length=50,null= True)
   quantity = models.FloatField(default = 0)
+  cost = models.FloatField(default = 0)
   user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='StockYeasts')
 
 class Yeast(models.Model): 
@@ -93,6 +96,7 @@ class StockExtra(models.Model):
   name = models.CharField(max_length=50)
   producer = models.CharField(max_length=50,null= True)
   quantity = models.FloatField(default = 0)
+  cost = models.FloatField(default = 0)
   user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='StockExtras')
 
 class Extra(models.Model):

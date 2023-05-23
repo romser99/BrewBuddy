@@ -33,7 +33,44 @@
           <td>{{recipe.family}}</td>
           <td>{{ recipe.volume }}</td>
           <td>{{ recipe.alcool|floatformat:1 }}</td>
-          <td>{{ recipe.ebc|floatformat:1 }}</td>
+          <td>{{ recipe.ebc|floatformat:1 }}
+            <span class="ebc-color"></span>
+            <style>
+                .ebc-color {
+                    display: inline-block;
+                    width: 12px;
+                    height: 12px;
+                    margin-right: 5px;
+                    border-radius: 50%;
+                    background-color: #ffcc00; 
+            </style>
+            <script>
+                var ebc = {{ recipe.ebc }}; 
+                var ebcColor = getEbcColor(ebc); 
+                var ebcColorSpan = document.querySelector('.ebc-color');
+                ebcColorSpan.style.backgroundColor = ebcColor;
+                function getEbcColor(ebc) {
+                    if (ebc < 8) {
+                        return "#F3F993"; // pale straw
+                      } else if (ebc < 12) {
+                        return "#F5F56B"; // straw
+                      } else if (ebc < 20) {
+                        return "#F7EA38"; // pale gold
+                      } else if (ebc < 30) {
+                        return "#F0D020"; // deep gold
+                      } else if (ebc < 40) {
+                        return "#E0B040"; // amber
+                      } else if (ebc < 50) {
+                        return "#D07000"; // copper
+                      } else if (ebc < 80) {
+                        return "#A05000"; // dark copper
+                      } else if (ebc < 120) {
+                        return "#703010"; // brown
+                      } else {
+                        return "#501800"; // dark brown
+                      }
+                }
+            </script>
           <td>{{ recipe.ibu|floatformat:1}}</td>
           <td >{{ recipe.Likes.count }}
              
@@ -56,7 +93,6 @@
             <th>EBC</th>
             <th>Producer</th>
             <th>Quantity (kg)</th>
-            <th>Remove</th>
         </tr>
     </thead>
 <tbody>
@@ -77,7 +113,6 @@
         <tr>
             <th>Temperature (°C)</th>
             <th>Time (min)</th>
-            <th>Remove</th>
         </tr>
     </thead>
 <tbody>
@@ -94,7 +129,7 @@
     <thead>
         <tr>
             <th>DryHopping</th>
-            <th>Time</th>
+            <th>Time (minutes/days)</th>
             <th>Hops</th>
             <th>Extras</th>
         </tr>
@@ -102,7 +137,7 @@
 <tbody>
     {% for boiling in boilings %}
     <tr>
-        <td>{{ boiling.cool }}</td>
+        <td>{% if boiling.cool%}Yes{% else %}no{% endif %}</td>
         <td>{{ boiling.time }}</td>
         <td>
             <ul>
@@ -130,8 +165,7 @@
     <thead>
         <tr>
             <th>Name</th>
-            <th>Quantity</th>
-            <th>Remove</th>
+            <th>Quantity (doses)</th>
         </tr>
     </thead>
 <tbody>
@@ -148,8 +182,7 @@
     <thead>
         <tr>
             <th>Temperature</th>
-            <th>Time</th>
-            <th>Remove</th>
+            <th>Time (days)</th>
         </tr>
     </thead>
 <tbody>
