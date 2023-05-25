@@ -1,32 +1,26 @@
 {% load static %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-{% load bootstrap4 %}
-{% bootstrap_css %}
-{% bootstrap_javascript jquery='full' %}
-{% bootstrap_messages %}
+{% load bootstrap4 %} {% bootstrap_css %} {% bootstrap_javascript jquery='full'%} {% bootstrap_messages %}
 <!DOCTYPE html>
 <html>
-<head>
-  
-  <link rel="stylesheet" href="{% static 'myfirst.css' %}">
-  <title>{% block title %}{% endblock %}</title>
-  <style>
-    html {
-      background-image: url("{% block background_image %}{% endblock %}");
-      background-size: cover;
-      background-position: center center;
-      background-attachment: fixed;
-    }
-    
-  </style>
-  
-</head>
-<header>
-  <nav class="topnav">
-    <a href="/">Home</a>
-    <a href="{% url 'recipe_search' %}" class="nav-link">The Vault</a>
-    {% if user.is_authenticated %}
+  <head>
+    <link rel="stylesheet" href="{% static 'myfirst.css' %}" />
+    <title>{% block title %}{% endblock %}</title>
+    <style>
+      html {
+        background-image: url("{% block background_image %}{% endblock %}");
+        background-size: cover;
+        background-position: center center;
+        background-attachment: fixed;
+      }
+    </style>
+  </head>
+  <header>
+    <nav class="topnav">
+      <a href="/">Home</a>
+      <a href="{% url 'recipe_search' %}" class="nav-link">The Vault</a>
+      {% if user.is_authenticated %}
       <a href="{% url 'logout' %}" class="nav-link">Disconnect</a>
       <a href="{% url 'malt_inventory' %}" class="nav-link">My Malts</a>
       <a href="{% url 'hop_inventory' %}" class="nav-link">My Hops</a>
@@ -34,21 +28,14 @@
       <a href="{% url 'extra_inventory' %}" class="nav-link">Other</a>
       <a href="{% url 'recipe_inventory' %}" class="nav-link">My Recipes</a>
       <a href="{% url 'liked_recipes' %}" class="nav-link">My Cookbook</a>
-    {% else %}
+      {% else %}
       <a href="{% url 'login' %}" class="nav-link">Connect</a>
-      
-    {% endif %}
-  </nav>
-</header>
 
+      {% endif %}
+    </nav>
+  </header>
 
-<body>
-  
-  
-  <div class="block-center">
-    {% block content %}
-    {% endblock %}
-  </div>
-  
-</body>
+  <body>
+    <div class="block-center">{% block content %} {% endblock %}</div>
+  </body>
 </html>

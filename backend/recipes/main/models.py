@@ -1,6 +1,5 @@
 
 
-# Create your models here.
 from django.db import models
 from django import forms
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
@@ -43,7 +42,7 @@ class StockMalt(models.Model):
   type = models.CharField(max_length=50,null= True)
   ebc = models.IntegerField(default=2)
   producer = models.CharField(max_length=50,null= True)
-  quantity = models.FloatField(default = 0)
+  quantity = models.DecimalField(max_digits=10, decimal_places=2,default = 0)
   cost = models.FloatField(default = 0)
   user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='StockMalts')
   def __str__(self):
@@ -64,7 +63,7 @@ class StockHop(models.Model):
   pellet = models.BooleanField(default=True)
   alpha = models.FloatField(default = 0)  
   producer = models.CharField(max_length=50,null= True)
-  quantity = models.FloatField(default = 0)
+  quantity = models.DecimalField(max_digits=10, decimal_places=2,default = 0)
   cost = models.FloatField(default = 0)
   user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='StockHops')
 
@@ -95,7 +94,7 @@ class StockExtra(models.Model):
 
   name = models.CharField(max_length=50)
   producer = models.CharField(max_length=50,null= True)
-  quantity = models.FloatField(default = 0)
+  quantity = models.DecimalField(max_digits=10, decimal_places=2,default = 0)
   cost = models.FloatField(default = 0)
   user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='StockExtras')
 
@@ -149,10 +148,10 @@ class Recipe(models.Model):
   name = models.CharField(max_length=50)
   description = models.CharField(max_length=500,null= True)
   volume = models.FloatField(default = 0, null = True)
-  alcool = models.FloatField(default = 0, null = True)
-  ebc = models.FloatField(default = 0, null = True)
-  ibu = models.FloatField(default = 0 , null = True)
-  cost = models.FloatField(default = 0 , null = True)
+  alcool = models.DecimalField(max_digits=10, decimal_places=2, default = 0, null = True)
+  ebc = models.DecimalField(max_digits=10, decimal_places=2, default = 0, null = True)
+  ibu = models.DecimalField(max_digits=10, decimal_places=2, default = 0, null = True)
+  cost = models.DecimalField(max_digits=10, decimal_places=2, default = 0, null = True)
   sale = models.FloatField(default = 0 , null = True)
   private = models.BooleanField(default = True)
   user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='recipes')

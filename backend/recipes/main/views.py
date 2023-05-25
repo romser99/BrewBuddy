@@ -226,8 +226,6 @@ def edit_recipe(request, recipe_id):
 def recipe_detail(request, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
     user = request.user
-
-    # Get related objects for recipe
     malts = recipe.Malts.all()
     boilings = recipe.Boilings.all()
     yeasts = recipe.Yeasts.all()
@@ -248,19 +246,17 @@ def recipe_detail(request, recipe_id):
 def recipe_detail_read(request, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
     user = request.user
-
-    # Get related objects for recipe
     malts = recipe.Malts.all()
     boilings = recipe.Boilings.all()
     yeasts = recipe.Yeasts.all()
     fermentations = recipe.Fermentations.all()
     brewings = recipe.Brewings.all()
     Likes = recipe.Likes.all()
-    is_liked = False  # Set default value to False
+    is_liked = False 
     for like in Likes:
         if like.user == user:
             is_liked = True
-            break  # Exit the loop as soon as a like is found
+            break  
 
     context = {
         'recipe': recipe,
@@ -282,8 +278,8 @@ def select_malt(request, recipe_id):
     if request.method == 'POST':
         form = MaltForm(request.POST, user=request.user)
         if form.is_valid():
-            stock_malt_id = int(form.cleaned_data['stock_malt'])  # use int() to convert the string id to integer
-            stock_malt = StockMalt.objects.get(id=stock_malt_id)  # use the integer id directly
+            stock_malt_id = int(form.cleaned_data['stock_malt'])  
+            stock_malt = StockMalt.objects.get(id=stock_malt_id)  
             Malt.objects.create(
                 recipe=recipe,
                 stockMalt=stock_malt,

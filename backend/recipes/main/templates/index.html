@@ -1,39 +1,43 @@
-{% extends 'master.html' %}
-{% load static %}
-{% block background_image %}{% static 'images/background-main.jpg' %}{% endblock %}
-{% block content %}
+{% extends 'master.html' %} {% load static %} {% block background_image %}{%static 'images/background-main.jpg' %}{% endblock %} {% block content %}
 <form method="GET" action="{% url 'recipe_search' %}">
-    <input type="text" name="search_query" value="{{ search_query }}" placeholder="Looking for a recipe ?">
-    <button type="submit">Search</button>  
+  <input
+    type="text"
+    name="search_query"
+    value="{{ search_query }}"
+    placeholder="Looking for a recipe ?"
+  />
+  <button type="submit">Search</button>
 </form>
-<a href="{% url 'get_random_recipe' %}" >Surprise Me</a>
-
+<a href="{% url 'get_random_recipe' %}">Surprise Me</a>
 
 <div class="row">
-    
-    {% for recipe in recipes %}
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
-                    <div class="text-right">{{recipe.family}}</div>
-                    
-                </div>
-                <div class="card-body">
-                    <h3 class="card-title">{{ recipe.name }} by {{recipe.user.username}}</h3>
-                    <p class="card-text">{{ recipe.description }}</p>
-                </div>
-                <div class="card-footer d-flex justify-content-between">
-                    <div>
-                        <span class="badge badge-primary">{{recipe.Likes.count}} Likes</span>
-                    </div>
-                    <div>
-                        <a href="{% url 'recipe_detail_read' recipe.id %}" class="btn btn-primary">View Recipe</a>
-                    </div>
-                    
-                </div>
-            </div>
+  {% for recipe in recipes %}
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header">
+        <div class="text-right">{{recipe.family}}</div>
+      </div>
+      <div class="card-body">
+        <h3 class="card-title">
+          {{ recipe.name }} by {{recipe.user.username}}
+        </h3>
+        <p class="card-text">{{ recipe.description }}</p>
+      </div>
+      <div class="card-footer d-flex justify-content-between">
+        <div>
+          <span class="badge badge-primary">{{recipe.Likes.count}} Likes</span>
         </div>
-    {% endfor %}
+        <div>
+          <a
+            href="{% url 'recipe_detail_read' recipe.id %}"
+            class="btn btn-primary"
+            >View Recipe</a
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
 </div>
 
 {% endblock %}
