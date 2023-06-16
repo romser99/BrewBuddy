@@ -33,6 +33,8 @@ class LoginForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['password'].widget.attrs.update({'autocomplete': 'current-password'})
+        self.fields['username'].widget.attrs.update({'placeholder': 'Email'})
+        self.fields['password'].widget.attrs.update({'placeholder': 'Password'})
 
     def confirm_login_allowed(self, user):
         if not user.is_active:

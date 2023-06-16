@@ -2,7 +2,7 @@
 {% load static %}
 {% block background_image %}{% static 'images/background-recipe.jpg' %}{% endblock %}
 {% block content %}
-<h1>{{ recipe.name }}</h1>
+<h1 style="margin-top:100px">{{ recipe.name }}</h1>
 <p>{{ recipe.description }}</p>
 <form method="POST" action="{% url 'like_recipe' recipe.id %}" class="float-right">
     {% csrf_token %}

@@ -1,43 +1,83 @@
-{% extends 'master.html' %} {% load static %} {% block background_image %}{%static 'images/background-main.jpg' %}{% endblock %} {% block content %}
-<form method="GET" action="{% url 'recipe_search' %}">
-  <input
-    type="text"
-    name="search_query"
-    value="{{ search_query }}"
-    placeholder="Looking for a recipe ?"
-  />
-  <button type="submit">Search</button>
-</form>
-<a href="{% url 'get_random_recipe' %}">Surprise Me</a>
-
-<div class="row">
-  {% for recipe in recipes %}
-  <div class="col-md-4">
-    <div class="card">
-      <div class="card-header">
-        <div class="text-right">{{recipe.family}}</div>
+{% extends 'master.html' %} {% load static %} {% block content %}
+<div class="image-div" style="background-image: url('{% static 'images/ColorBeer1.png' %}'); height:400px; margin-top: 0px"></div>
+  <div class="block-center" style="display:flex; justify-content:center; align-items:center;">
+    <form method="GET" action="{% url 'recipe_search' %}">
+      <div class="search-container" style="display: flex; align-items: center;">
+        <input type="text" class="search-field" name="search_query" value="{{ search_query }}" placeholder="Looking for a recipe ?" style="width:20rem"></input>
+        <button type="submit" class="background-search"> </button>
+        <p style="margin-left:20px; margin-right:20px; margin-top:15px">OR</p>
+        <a class="surprise" href="{% url 'get_random_recipe' %}"></a>
       </div>
-      <div class="card-body">
-        <h3 class="card-title">
-          {{ recipe.name }} by {{recipe.user.username}}
-        </h3>
-        <p class="card-text">{{ recipe.description }}</p>
-      </div>
-      <div class="card-footer d-flex justify-content-between">
-        <div>
-          <span class="badge badge-primary">{{recipe.Likes.count}} Likes</span>
-        </div>
-        <div>
-          <a
-            href="{% url 'recipe_detail_read' recipe.id %}"
-            class="btn btn-primary"
-            >View Recipe</a
-          >
-        </div>
-      </div>
-    </div>
+    </form>
   </div>
-  {% endfor %}
+<div style="background:#3B2F2C; width:100%;">
+  <div class="row block-center"  >
+    {% for recipe in recipes %}
+    <div class="col-md-2" >
+      <a href="{% url 'recipe_detail_read' recipe.id %}" class="card-link no-link-style" style="color:#3B2F2C">
+        <div class="card recipe-card"  >
+          <div class="card-body">
+            <div style="height:4rem">
+              <h5 class="card-title">{{ recipe.name }}</h5>
+            </div>
+            <div class="color-bar-{{ recipe.id }}"></div>
+            <style>
+              .color-bar-{{ recipe.id }} {
+                margin-bottom: 10px;
+                height: 10px;
+                background-color: #ffcc00;
+              }
+            </style>
+            <h5 >{{ recipe.family }}</h5>
+            <p class="card-text" style="font-size:12px">{{ recipe.description }}</p>
+          </div>
+          <div class="card-footer">
+            <small style="background-color:#9BCFDA; width:46px; height:26px;border-radius:6px; display:flex; justify-content:center; align-items:center;"> 
+              <img src="{% static 'images/pouce.png' %}" alt="Thumb" style="width: 24px; height: 19px; mix-blend-mode: overlay;">
+              {{recipe.Likes.count}}
+            </small>
+            <small class="text-muted">by {{ recipe.user.username }}</small>
+          </div>
+          
+        </div>
+      </a>
+    </div>
+    <script>
+      var ebc = {{ recipe.ebc }};
+      var ebcColor = getEbcColor(ebc);
+      var ebcColorSpan = document.querySelector('.color-bar-{{ recipe.id }}');
+      ebcColorSpan.style.backgroundColor = ebcColor;
+  
+      function getEbcColor(ebc) {
+        if (ebc < 8) {
+          return "#F3F993"; // pale straw
+        } else if (ebc < 12) {
+          return "#F5F56B"; // straw
+        } else if (ebc < 20) {
+          return "#F7EA38"; // pale gold
+        } else if (ebc < 30) {
+          return "#F0D020"; // deep gold
+        } else if (ebc < 40) {
+          return "#E0B040"; // amber
+        } else if (ebc < 50) {
+          return "#D07000"; // copper
+        } else if (ebc < 80) {
+          return "#A05000"; // dark copper
+        } else if (ebc < 120) {
+          return "#703010"; // brown
+        } else {
+          return "#501800"; // dark brown
+        }
+      }
+    </script>
+    {% endfor %}
+  </div>
 </div>
+<div style="height:200px"></div>
+<footer class="footer">
+    <p style="float:left;margin: 0;">BrewBuddy</p>
+    <p style="float:right;margin: 0;">Created and developped by Romain Serrano; Designed by Valentin Berbett</p>
+</footer>
+
 
 {% endblock %}

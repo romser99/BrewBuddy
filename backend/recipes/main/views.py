@@ -16,14 +16,15 @@ from django.db import transaction
 from django.contrib.auth import login, authenticate, logout
 from django.db.models import Count, Q
 from django.core.paginator import Paginator
+from decimal import Decimal
 
 
 def main(request):
     top_10_recipes = Recipe.objects.annotate(like_count=Count('Likes')).order_by('-like_count')[:10]
-    if len(top_10_recipes) < 3:
+    if len(top_10_recipes) < 6:
         random_recipes = top_10_recipes
     else:
-        random_recipes = random.sample(list(top_10_recipes), 3)
+        random_recipes = random.sample(list(top_10_recipes), 6)
     context = {'recipes': random_recipes, 'user': request.user}
     return render(request, 'index.html', context)
 
@@ -496,31 +497,34 @@ def advanced_edit_recipe(request, recipe_id):
         form = EditRecipeForm(instance=recipe)
     return render(request, 'advanced_edit_recipe.html', {'form': form})
 
-def recipe_stock(request,recipe_id):
-    if request.method =="POST":
+def recipe_stock(request, recipe_id):
+    if request.method == "POST":
         recipe = get_object_or_404(Recipe, pk=recipe_id, user=request.user)
         if request.POST.get('confirmed') == 'true':
-            for malt in recipe.Malts.all() :
+            for malt in recipe.Malts.all():
                 stockmalt = get_object_or_404(StockMalt, pk=malt.stockMalt.id)
-                stockmalt.quantity -= malt.quantity
+                stockmalt.quantity -= Decimal(malt.quantity)
                 stockmalt.save()
-            for yeast in recipe.Yeasts.all() :
+            
+            for yeast in recipe.Yeasts.all():
                 stockyeast = get_object_or_404(StockYeast, pk=yeast.stockYeast.id)
                 stockyeast.quantity -= yeast.quantity
                 stockyeast.save()
-            for boiling in recipe.Boilings.all() :
+            
+            for boiling in recipe.Boilings.all():
                 for hop in boiling.Hops.all():
                     stockhop = get_object_or_404(StockHop, pk=hop.stockHop.id)
-                    stockhop.quantity -= hop.quantity
+                    stockhop.quantity -= Decimal(hop.quantity)
                     stockhop.save()
-                for extra in boiling.Extras.all() :
+                
+                for extra in boiling.Extras.all():
                     stockextra = get_object_or_404(StockExtra, pk=extra.stockHop.id)
-                    stockextra.quantity -= extra.quantity
+                    stockextra.quantity -= Decimal(extra.quantity)
                     stockextra.save()
-            return redirect('recipe_detail',recipe_id = recipe_id)
-        else :
-            return redirect( 'recipe_detail',recipe_id=recipe_id)
-    
+            
+            return redirect('recipe_detail', recipe_id=recipe_id)
+        else:
+            return redirect('recipe_detail', recipe_id=recipe_id)
 def recipe_stock_confirm(request, recipe_id):
     recipe = get_object_or_404(Recipe, pk=recipe_id, user=request.user)
     context = {

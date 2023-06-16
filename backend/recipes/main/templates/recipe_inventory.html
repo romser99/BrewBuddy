@@ -4,10 +4,14 @@
 {% block background_image %}{% static 'images/background-recipe.jpg' %}{% endblock %}
 
 {% block content %}
-  <h2>My Recipes</h2>
-  
-    <button class="btn btn-light mb-3" id="add-recipe-btn" onclick="toggleForm()">Add Recipe</button>
-    <form id="add-recipe-form" method="POST" style="display:none;">
+<div class="container">
+<div class="title-container">
+  <h2 style="margin: 0;">Malt Inventory</h2>
+  <div class="button-container">
+    <button class="btn btn-light mb-3"id="add-recipe-btn" onclick="toggleForm()" style="background-color:#F4D790; margin-left:10px; border: black" >Add Recipe</button>
+  </div>
+</div>
+    <form class="inventory0" id="add-recipe-form" method="POST" style="display:none;">
       {% csrf_token %}
       {{ form.as_p }}
       <button class="btn btn-light" type="submit">Add Recipe</button>

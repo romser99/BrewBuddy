@@ -2,11 +2,13 @@
 
 
 {% block content %}
-<form method="post">
+<div class="loginbox"style="margin-top:200px">
+<form class="loginform" method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Save</button>
 </form>
 <p>No Account ?</p>
 <a class="nav-link" href="{% url 'register' %}">Register</a>
+</div>
 {% endblock %}

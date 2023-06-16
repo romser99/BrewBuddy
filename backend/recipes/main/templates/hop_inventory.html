@@ -2,27 +2,32 @@
 
 {% extends 'master.html' %}
 {% load static %}
-{% block background_image %}{% static 'images/background-hop.jpg' %}{% endblock %}
 {% block content %}
-  <h2>Hop Inventory</h2>
-  <div>
-    <button class="btn btn-light mb-3" id="add-hop-btn" onclick="toggleForm()">Add Hop</button>
-    <form id="add-hop-form" method="POST" style="display:none;">
+<div class="container" style="width:100%;">
+  <div class="title-container">
+    <h2 style="margin: 0;">Hop Inventory</h2>
+    <div class="button-container">
+      <button class="btn btn-light mb-3"id="add-hop-btn" onclick="toggleForm()" >Add Hop</button>
+    </div>
+  </div>
+  <div class="form-container">
+    <form class="inventory" id="add-hop-form" method="POST" style="display:none;">
         {% csrf_token %}
         <label for="name">Name:</label>
-        <input type="text" name="name"><br>
+        <input type="text" name="name">
         <label for="pellet">Pellet:</label>
-        <input type="checkbox" name="pellet"><br>
+        <input type="checkbox" name="pellet">
         <label for="alpha" >Alpha % :</label>
-        <input type="number" name="alpha" step="0.1"><br>
+        <input type="number" name="alpha" step="0.1">
         <label for="producer">Producer:</label>
-        <input type="text" name="producer"><br>
+        <input type="text" name="producer">
         <label for="quantity">Quantity (g):</label>
-        <input type="number" name="quantity" step="0.1"><br>
+        <input type="number" name="quantity" step="0.1">
         <label for="cost">Cost EUR/100g:</label>
-        <input type="number" name="cost" step="0.01"> <br>
+        <input type="number" name="cost" step="0.01"><br>
         <button class="btn btn-light" type="submit">Add hop</button>
     </form>
+  </div>
     <script>
         function toggleForm() {
           var form = document.getElementById("add-hop-form");
@@ -77,4 +82,5 @@
       {% endfor %}
     </tbody>
   </table>
+</div>
 {% endblock %}

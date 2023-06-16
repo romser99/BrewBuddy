@@ -1,14 +1,19 @@
 {% extends 'master.html' %}
 {% load static %}
-{% block background_image %}{% static 'images/background-recipe.jpg' %}{% endblock %} 
 
 {% block content %}
 
+<div class="search-container" style="margin-top:200px; margin-left:20%;">
+  <form method="GET" action="{% url 'recipe_search' %}">
+    <input type="text" class="search-field" name="search_query" value="{{ search_query }}" placeholder="Looking for a recipe ?" style="width:20rem"></input>
+    <button type="submit" class="background-search"> </button>
+    <a class="surprise" href="{% url 'get_random_recipe' %}"></a>
   
-<form method="GET" action="{% url 'recipe_search' %}">
-    <input type="text" name="search_query" value="{{ search_query }}">
-    <button for="sort_by" id="sort-parameters-btn" onclick="toggleForm()">Sort Parameters</button><br>
-    <div class="form-group" id ="sort-parameters-form" style="display:none;">
+</div>
+<div class="results-container">
+  <div class="sort-parameters">
+    <h3>Sort by</h3>
+    <div class="form-group" id ="sort-parameters-form">
         <div class="form-check">
             <input class="form-check-input" type="checkbox" id="sort_name" name="sort_by" value="name" {% if 'name' in sort_by %}checked{% endif %}>
             <label class="form-check-label" for="sort_name">Name</label>
@@ -33,115 +38,105 @@
             <input class="form-check-input" type="checkbox" id="sort_order" name="descending" {% if 'descending' in sort_by %}checked{% endif %}>
             <label class="form-check-label" for="sort_order">Descending</label>
         </div>
+      </form>
     </div>
-    <script>
-        function toggleForm() {
-            event.preventDefault(); // Prevent form submission and page refresh
-            var form = document.getElementById("sort-parameters-form");
-            var btn = document.getElementById("sort-parameters-btn");
-            form.style.display = form.style.display === "none" ? "block" : "none";
-            btn.innerHTML = form.style.display === "none" ? "Sort Parameters" : "Hide Sort Parameters";
-        }
-      </script>
-      
-    <button type="submit">Search</button>
-  </form>
-  
-  {% if recipes %}
-    <h2>Search Results</h2>
-    <ul>
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Volume (L)</th>
-                    <th>ABV (%)</th>
-                    <th>EBC</th>
-                    <th>IBU</th>
-                    <th>Likes</th>
-                    <th>Details</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for recipe in recipes %}
-                <tr>
-                    <td>{{ recipe.name }}</td>
-                    <td>{{recipe.family}}</td>
-                    <td>{{ recipe.volume }}</td>
-                    <td>{{ recipe.alcool|floatformat:1 }}</td>
-                    <td>{{ recipe.ebc|floatformat:1 }}
-                        <span class="ebc-color-{{ recipe.id }}"></span>
-                        <style>
-                          .ebc-color-{{ recipe.id }} {
-                            display: inline-block;
-                            width: 12px;
-                            height: 12px;
-                            margin-right: 5px;
-                            border-radius: 50%;
-                            background-color: #ffcc00;
-                          }
-                        </style>
-                        <script>
-                          var ebc = {{ recipe.ebc }};
-                          var ebcColor = getEbcColor(ebc);
-                          var ebcColorSpan = document.querySelector('.ebc-color-{{ recipe.id }}');
-                          ebcColorSpan.style.backgroundColor = ebcColor;
-                      
-                          function getEbcColor(ebc) {
-                            if (ebc < 8) {
-                              return "#F3F993"; // pale straw
-                            } else if (ebc < 12) {
-                              return "#F5F56B"; // straw
-                            } else if (ebc < 20) {
-                              return "#F7EA38"; // pale gold
-                            } else if (ebc < 30) {
-                              return "#F0D020"; // deep gold
-                            } else if (ebc < 40) {
-                              return "#E0B040"; // amber
-                            } else if (ebc < 50) {
-                              return "#D07000"; // copper
-                            } else if (ebc < 80) {
-                              return "#A05000"; // dark copper
-                            } else if (ebc < 120) {
-                              return "#703010"; // brown
-                            } else {
-                              return "#501800"; // dark brown
+  </div>
+  <div class="search-results">
+    {% if recipes %}
+      <ul>
+          <table>
+              <thead>
+                  <tr>
+                      <th>Name</th>
+                      <th>Type</th>
+                      <th>Volume (L)</th>
+                      <th>ABV (%)</th>
+                      <th>EBC</th>
+                      <th>IBU</th>
+                      <th>Likes</th>
+                      <th>Details</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for recipe in recipes %}
+                  <tr>
+                      <td>{{ recipe.name }}</td>
+                      <td>{{recipe.family}}</td>
+                      <td>{{ recipe.volume }}</td>
+                      <td>{{ recipe.alcool|floatformat:1 }}</td>
+                      <td>{{ recipe.ebc|floatformat:1 }}
+                          <span class="ebc-color-{{ recipe.id }}"></span>
+                          <style>
+                            .ebc-color-{{ recipe.id }} {
+                              display: inline-block;
+                              width: 12px;
+                              height: 12px;
+                              margin-right: 5px;
+                              border-radius: 50%;
+                              background-color: #ffcc00;
                             }
-                          }
-                        </script>
+                          </style>
+                          <script>
+                            var ebc = {{ recipe.ebc }};
+                            var ebcColor = getEbcColor(ebc);
+                            var ebcColorSpan = document.querySelector('.ebc-color-{{ recipe.id }}');
+                            ebcColorSpan.style.backgroundColor = ebcColor;
+                        
+                            function getEbcColor(ebc) {
+                              if (ebc < 8) {
+                                return "#F3F993"; // pale straw
+                              } else if (ebc < 12) {
+                                return "#F5F56B"; // straw
+                              } else if (ebc < 20) {
+                                return "#F7EA38"; // pale gold
+                              } else if (ebc < 30) {
+                                return "#F0D020"; // deep gold
+                              } else if (ebc < 40) {
+                                return "#E0B040"; // amber
+                              } else if (ebc < 50) {
+                                return "#D07000"; // copper
+                              } else if (ebc < 80) {
+                                return "#A05000"; // dark copper
+                              } else if (ebc < 120) {
+                                return "#703010"; // brown
+                              } else {
+                                return "#501800"; // dark brown
+                              }
+                            }
+                          </script>
+                        </td>
+                        
+                      <td>{{ recipe.ibu|floatformat:1}}</td>
+                      <td>{{ recipe.Likes.count }}</td>  
+                      <td>
+                          <form action="{% url 'recipe_detail_read' recipe.id %}" method="GET">
+                              {% csrf_token %}
+                              <button class="btn btn-info btn-sm" type="submit">Details</button>
+                          </form>
                       </td>
-                      
-                    <td>{{ recipe.ibu|floatformat:1}}</td>
-                    <td>{{ recipe.Likes.count }}</td>  
-                    <td>
-                        <form action="{% url 'recipe_detail_read' recipe.id %}" method="GET">
-                            {% csrf_token %}
-                            <button class="btn btn-info btn-sm" type="submit">Details</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </ul>
-    <div class="pagination">
-        <span class="step-links">
-            {% if recipes.has_previous %}
-                <a href="?search_query={{ search_query }}&sort_by={{ sort_by }}&descending={{ descending }}&page=1">&laquo; first</a>
-                <a href="?search_query={{ search_query }}&sort_by={{ sort_by }}&descending={{ descending }}&page={{ recipes.previous_page_number }}">previous</a>
-            {% endif %}
+                  </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+      </ul>
+      <div class="pagination">
+          <span class="step-links">
+              {% if recipes.has_previous %}
+                  <a href="?search_query={{ search_query }}&sort_by={{ sort_by }}&descending={{ descending }}&page=1">&laquo; first</a>
+                  <a href="?search_query={{ search_query }}&sort_by={{ sort_by }}&descending={{ descending }}&page={{ recipes.previous_page_number }}">previous</a>
+              {% endif %}
 
-            <span class="current-page">{{ recipes.number }}</span>
+              <span class="current-page">{{ recipes.number }}</span>
 
-            {% if recipes.has_next %}
-                <a href="?search_query={{ search_query }}&sort_by={{ sort_by }}&descending={{ descending }}&page={{ recipes.next_page_number }}">next</a>
-                <a href="?search_query={{ search_query }}&sort_by={{ sort_by }}&descending={{ descending }}&page={{ recipes.paginator.num_pages }}">last &raquo;</a>
-            {% endif %}
-        </span>
-    </div>
-  {% else %}
+              {% if recipes.has_next %}
+                  <a href="?search_query={{ search_query }}&sort_by={{ sort_by }}&descending={{ descending }}&page={{ recipes.next_page_number }}">next</a>
+                  <a href="?search_query={{ search_query }}&sort_by={{ sort_by }}&descending={{ descending }}&page={{ recipes.paginator.num_pages }}">last &raquo;</a>
+              {% endif %}
+          </span>
+      </div>
+    {% else %}
     <p>No recipes found.</p>
-  {% endif %}
-  
+    {% endif %}
+  </div>
+</div>
 {% endblock %}
